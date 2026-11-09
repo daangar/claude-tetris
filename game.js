@@ -183,6 +183,7 @@ const SKINS = {
   neon: {
     label: 'Neón',
     bg: '#000',
+    grid: 'rgba(255,255,255,0.08)',
     colors: ['#00ffff', '#ffff00', '#ff00ff', '#39ff14', '#ff3131', '#4d9bff', '#ff9500'],
     drawBlock(context, px, py, size, color) {
       context.shadowColor = color;
@@ -204,7 +205,7 @@ const SKINS = {
       rrect(context, px + 2, py + 2, size - 4, size - 4, size * 0.3);
       context.fillStyle = color;
       context.fill();
-      context.strokeStyle = 'rgba(255,255,255,0.7)';
+      context.strokeStyle = 'rgba(0,0,0,0.18)';
       context.lineWidth = 1.5;
       context.stroke();
     },
@@ -243,7 +244,7 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
 }
 
 function drawGrid() {
-  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--grid').trim();
+  ctx.strokeStyle = SKINS[currentSkin].grid || getComputedStyle(document.documentElement).getPropertyValue('--grid').trim();
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -349,6 +350,7 @@ function init() {
 }
 
 document.addEventListener('keydown', e => {
+  if (e.target === document.getElementById('skin-select')) return; // el select no controla el juego
   if (e.code === 'KeyP') { togglePause(); return; }
   if (paused || gameOver) return;
   switch (e.code) {
@@ -411,10 +413,10 @@ skinSelect.addEventListener('change', () => {
   skinSelect.blur(); // evita que Space/flechas manipulen el select
 });
 
-init();
-applyTheme('dark');
 {
   let saved = null;
   try { saved = localStorage.getItem('tetris.skin'); } catch (err) { /* ignorar */ }
   applySkin(saved);
 }
+init();
+applyTheme('dark');

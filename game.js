@@ -113,7 +113,7 @@ function clearLines() {
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
     combo++;
-    if (combo > records.bestCombo) records.bestCombo = combo;
+    if (combo > records.bestCombo) { records.bestCombo = combo; saveRecords(); }
   } else {
     combo = 0;
   }
@@ -261,10 +261,13 @@ function loop(ts) {
     }
   }
   draw();
+  if (gameOver) return; // endGame() ya detuvo el bucle; no reprogramarlo
   animId = requestAnimationFrame(loop);
 }
 
 function init() {
+  commitPendingRecord(); // no perder un récord sin nombre al reiniciar
+  if (document.activeElement) document.activeElement.blur(); // evita que Space active un botón
   started = true;
   combo = 0;
   startOverlay.classList.add('hidden');
@@ -441,15 +444,23 @@ function recordsOnGameOver() {
   }
 }
 
-nameForm.addEventListener('submit', e => {
-  e.preventDefault();
-  if (pendingRank < 0) return;
+// Inserta la puntuación pendiente (si la hay) en el top; devuelve su posición o -1
+function commitPendingRecord() {
+  if (pendingRank < 0) return -1;
   const name = nameInput.value.trim().slice(0, 12) || 'Anónimo';
-  const rank = pendingRank;
+  const rank = rankFor(score); // recalcula por si el top cambió
   pendingRank = -1;
+  if (rank < 0) return -1;
   records.top.splice(rank, 0, { name, score });
   records.top.length = Math.min(records.top.length, MAX_TOP);
   saveRecords();
+  return rank;
+}
+
+nameForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const rank = commitPendingRecord();
+  if (rank < 0) return;
   nameForm.classList.add('hidden');
   renderOver(rank, false);
   restartBtn.focus();

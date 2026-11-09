@@ -49,7 +49,10 @@ jobs:
                Si el evento es "edited" y el contenido cambió, quita con --remove-label los labels que ya
                no apliquen. Respeta labels puestos por personas que sigan siendo válidos.
             4. Publica UN solo comentario de diagnóstico, en español, que empiece con el marcador
-               `<!-- claude-triage -->` y tenga estas secciones:
+               `<!-- claude-triage -->`. El comentario debe estar en formato Markdown compatible con
+               GitHub (GitHub Flavored Markdown): encabezados con `##`/`###`, listas con `-`, código en
+               línea con `backticks`, bloques de código con triple backtick y lenguaje (p. ej. ```js),
+               negritas con `**`, y saltos de línea reales (no secuencias `\n` literales). Tendrá estas secciones:
                - **Resumen**: qué se reporta o solicita, en 1-2 frases.
                - **Clasificación**: labels asignados y por qué.
                - **Análisis / causa probable**: archivos y funciones concretas implicadas

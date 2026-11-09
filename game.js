@@ -44,6 +44,10 @@ const themeToggle = document.getElementById('theme-toggle');
 let startLevel = 1;
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
+function speedFor(lvl) {
+  return Math.max(100, 1000 - (lvl - 1) * 90);
+}
+
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
 }
@@ -109,7 +113,7 @@ function clearLines() {
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
     level = startLevel + Math.floor(lines / 10);
-    dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    dropInterval = speedFor(level);
     updateHUD();
   }
 }
@@ -264,7 +268,7 @@ function init() {
   level = startLevel;
   paused = false;
   gameOver = false;
-  dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+  dropInterval = speedFor(level);
   dropAccum = 0;
   lastTime = performance.now();
   next = randomPiece();
@@ -278,7 +282,8 @@ function init() {
 
 document.addEventListener('keydown', e => {
   if (e.code === 'KeyP' || e.code === 'Escape') {
-    if (e.target === startLevelSelect && e.code === 'KeyP') return;
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target === startLevelSelect) startLevelSelect.blur();
     e.preventDefault();
     togglePause();
     return;
@@ -319,7 +324,6 @@ for (let i = 1; i <= 15; i++) startLevelSelect.add(new Option(String(i), String(
 function showPauseMenu() {
   pauseMain.classList.remove('hidden');
   pauseControls.classList.add('hidden');
-  startLevelSelect.value = String(startLevel);
   pauseMenu.classList.remove('hidden');
 }
 
@@ -333,6 +337,7 @@ document.getElementById('pause-resume').addEventListener('click', e => {
 });
 document.getElementById('pause-restart').addEventListener('click', e => {
   e.currentTarget.blur();
+  startLevel = parseInt(startLevelSelect.value, 10) || 1;
   init();
 });
 document.getElementById('pause-controls-btn').addEventListener('click', e => {
@@ -345,10 +350,7 @@ document.getElementById('pause-back').addEventListener('click', e => {
   pauseControls.classList.add('hidden');
   pauseMain.classList.remove('hidden');
 });
-startLevelSelect.addEventListener('change', () => {
-  startLevel = parseInt(startLevelSelect.value, 10) || 1;
-  startLevelSelect.blur();
-});
+startLevelSelect.addEventListener('change', () => startLevelSelect.blur());
 
 // Tema: siempre inicia en oscuro; no se persiste.
 function applyTheme(theme) {

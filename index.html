@@ -39,7 +39,7 @@
             <li><kbd>↑</kbd> rotar</li>
             <li><kbd>↓</kbd> bajar</li>
             <li><kbd>Space</kbd> caída</li>
-            <li><kbd>P</kbd> pausa</li>
+            <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
           </ul>
         </div>
 
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div id="pause-menu" class="overlay hidden" role="dialog" aria-label="Menú de pausa">
+    <div id="pause-menu" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Menú de pausa">
       <div class="overlay-box pause-box">
         <div id="pause-main" class="pause-view">
           <p class="pause-title">PAUSA</p>
@@ -65,6 +65,7 @@
           <label class="pause-level">Nivel inicial
             <select id="start-level-select"></select>
           </label>
+          <p class="pause-note">Se aplica al pulsar Reiniciar</p>
         </div>
         <div id="pause-controls" class="pause-view hidden">
           <p class="pause-title">CONTROLES</p>
